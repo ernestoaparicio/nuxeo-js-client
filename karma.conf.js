@@ -15,8 +15,11 @@ module.exports = (config) => {
     browserify: {
       debug: true,
       transform: [['babelify', {
-        presets: ['es2015'],
-        plugins: ['add-module-exports', 'transform-es2015-modules-commonjs'],
+        presets: ['@babel/preset-env'],
+        plugins: [
+          '@babel/plugin-transform-modules-commonjs',
+          ['@babel/plugin-transform-for-of', { loose: true }],
+        ],
       }]],
     },
     client: {

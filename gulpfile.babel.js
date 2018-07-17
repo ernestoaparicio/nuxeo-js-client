@@ -95,7 +95,7 @@ gulp.task('it:node', ['pre-test'], () => {
     }));
 });
 
-gulp.task('it:browser', ['build:browser'], (done) => {
+gulp.task('it:browser', (done) => {
   new Server({
     configFile: __dirname + '/karma.conf.js',
     singleRun: true,
@@ -107,9 +107,7 @@ gulp.task('it:browser', ['build:browser'], (done) => {
   }, () => done(undefined)).start();
 });
 
-gulp.task('it:es5', gulpSequence('build:es5', 'copy:files', 'it:node:es5'));
-
-gulp.task('it:node:es5', () => {
+gulp.task('it:es5', () => {
   return gulp.src('test/**/*.spec.js')
     .pipe(mocha({
       require: ['./test/helpers/setup.js', './test/helpers/setup-node-es5.js'],
@@ -134,7 +132,8 @@ gulp.task('checkstyle', () => {
     .pipe(eslint.format('checkstyle', fs.createWriteStream(path.join(targetFolder, '/checkstyle-result.xml'))));
 });
 
-gulp.task('it', gulpSequence('checkstyle', 'it:node', 'it:browser'));
+gulp.task('it', gulpSequence('checkstyle', 'build:es5', 'build:browser',
+  'copy:lib', 'copy:files', 'it:node', 'it:browser'));
 
 gulp.task('copy:lib', () => {
   return gulp.src('lib/**')
